@@ -82,34 +82,69 @@ getAverageGoals(fifaData);
 
 /// STRETCH 🥅 //
 
-/* Stretch 1: Create a function called `getCountryWins` that takes the parameters `data` and `team initials` and returns the number of world cup wins that country has had. 
+/* Stretch 1: Create a function called `getCountryWins` that takes the parameters `data` and `team initials` 
+and returns the number of world cup wins that country has had. 
 
 Hint: Investigate your data to find "team initials"!
 Hint: use `.reduce` */
 
-function getCountryWins(/* code here */) {
+function getCountryWins(data, init) {
 
-    /* code here */
+    const arr = data.filter((item) => item['Home Team Initials'] === init && item['Home Team Goals'] > item['Away Team Goals']);
+    const arr2 = data.filter((item) => item['Away Team Initials'] === init && item['Away Team Goals'] > item['Home Team Goals']);
+    return arr.length + arr2.length;
+};  
 
+console.log(getCountryWins(fifaData, 'ITA'));
+
+
+/* Stretch 3: Write a function called getGoals() that accepts a parameter `data` 
+and returns the team with the most goals score per appearance (average goals for) 
+in the World Cup finals */
+
+function getGoals(data) {
+    // step 1 -- filter the final team list.
+    const final = data.filter((item)=> item.Stage === 'Final');
+    console.log(final);
+
+    // step 2 -- since it doesn't matter if it's Home or Away, I'll just put them in a new array with name and score and appearance
+    const nameScore = [];
+    for (let i = 0; i < final.length; i++) {
+        nameScore.push({name : final[i]['Home Team Name'], score : final[i]['Home Team Goals'], appearance : 1});
+        nameScore.push({name : final[i]['Away Team Name'], score : final[i]['Away Team Goals'], appearance : 1});
+    }
+    // step 3 -- find out items with same name and then update the score and appearance. Also replace the duplicates with ''
+    console.log(nameScore);
+    for (let i = 0; i<nameScore.length; i++) {
+        for(let j = 1 + i; j<nameScore.length; j++) {
+            if(nameScore[i].name === nameScore[j].name) {
+                nameScore[i].appearance++;
+                nameScore[i].score += nameScore[j].score;
+                nameScore[j].name = '';
+            }
+        }
+    }
+    // step 4 -- filter the final list of 13 teams
+    const finalList = nameScore.filter((item)=>item.name !== '')
+    console.log(finalList);
+    const averageList = [];
+    for (let i = 0; i<finalList.length; i++) {
+        averageList[i] = {name: finalList[i].name, average: finalList[i].score / finalList[i].appearance}
+    }
+    console.log(averageList);
+    // step 5 -- sort the queue with the max in the top
+    let max = [...averageList];
+    max.sort((a, b) =>  b.average - a.average );
+    console.log(max);
+    console.log(`The best team are ${max[0].name} and ${max[1].name}`)
 };
 
-getCountryWins();
-
-
-/* Stretch 3: Write a function called getGoals() that accepts a parameter `data` and returns the team with the most goals score per appearance (average goals for) in the World Cup finals */
-
-function getGoals(/* code here */) {
-
-    /* code here */
-
-};
-
-getGoals();
+getGoals(fifaData);
 
 
 /* Stretch 4: Write a function called badDefense() that accepts a parameter `data` and calculates the team with the most goals scored against them per appearance (average goals against) in the World Cup finals */
 
-function badDefense(/* code here */) {
+function badDefense(data) {
 
     /* code here */
 
